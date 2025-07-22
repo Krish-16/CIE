@@ -4,8 +4,11 @@ import LoginCard from "../components/LoginCard";
 const FacultyLogin = () => {
   const [id, setId] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
   const handleLogin = async () => {
+    setError("");
+
     const res = await fetch("http://localhost:5000/api/auth/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -19,7 +22,7 @@ const FacultyLogin = () => {
       localStorage.setItem("user", JSON.stringify(data.user));
       window.location.href = "/faculty-dashboard";
     } else {
-      alert(data.message || "Login failed");
+      setError(data.message || "Login failed");
     }
   };
 
@@ -31,16 +34,17 @@ const FacultyLogin = () => {
       }}
     >
       <LoginCard
-        title="EZCIE Faculty Portal"
-        subtitle="Faculty, please sign in."
-        idPlaceholder="Faculty ID"
-        passwordPlaceholder="Password"
-        buttonText="Sign In"
+        title="EzCIE Faculty Portal"
+        subtitle="Please login to continue."
+        idPlaceholder="Enter your ID"
+        passwordPlaceholder="Enter your password"
+        buttonText="Login"
         id={id}
         setId={setId}
         password={password}
         setPassword={setPassword}
         onSubmit={handleLogin}
+        error={error}
       />
     </div>
   );

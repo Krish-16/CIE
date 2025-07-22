@@ -4,22 +4,28 @@ import LoginCard from "../components/LoginCard";
 const AdminLogin = () => {
   const [id, setId] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
   const handleLogin = async () => {
-    const res = await fetch("http://localhost:5000/api/auth/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ id, password, role: "admin" }),
-    });
+    setError(""); // Clear previous error
+    try {
+      const res = await fetch("http://localhost:5000/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, password, role: "admin" }),
+      });
 
-    const data = await res.json();
+      const data = await res.json();
 
-    if (data.token) {
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("user", JSON.stringify(data.user));
-      window.location.href = "/admin-dashboard";
-    } else {
-      alert(data.message || "Login failed");
+      if (data.token) {
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("user", JSON.stringify(data.user));
+        window.location.href = "/admin-dashboard";
+      } else {
+        setError(data.message || "Login failed");
+      }
+    } catch {
+      setError("Network error. Try again.");
     }
   };
 
@@ -31,16 +37,17 @@ const AdminLogin = () => {
       }}
     >
       <LoginCard
-        title="EZCIE Admin Portal"
+        title="EzCIE Admin Portal"
         subtitle="Admin Login"
         idPlaceholder="Admin ID"
         passwordPlaceholder="Password"
-        buttonText="Sign In"
+        buttonText="Login In"
         id={id}
         setId={setId}
         password={password}
         setPassword={setPassword}
         onSubmit={handleLogin}
+        error={error} // <-- add this line
       />
     </div>
   );
